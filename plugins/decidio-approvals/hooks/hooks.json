@@ -1,0 +1,35 @@
+{
+  "description": "Decidio approvals. Every hook runs `node ${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs <event>` in exec form: the launcher enters the project folder and runs the pinned release's `npx -y @decidio/sdk@<release> hook <event>`, passing stdin, stdout and the exit code through (on Windows too, with no shell of ours). Before every Bash/PowerShell call, the pretool hook asks Decidio whether the command needs a person's approval (only destructive commands do - `npx @decidio/sdk hook rules`); after it runs, the posttool hook records the execution, which spends that approval. The same pair guards Claude Code's own settings: a Write, Edit or MultiEdit on .claude/settings*.json, ~/.claude/settings*.json or the Decidio plugin's files is asked about when it would remove or change Decidio's hooks, turn hooks or the plugin off, or leave the file invalid (the `if` filters keep ordinary edits from starting the hook). At session start - and after /clear and a compaction - the session hook tells the person in one line that approvals are on and who approves, and, when the person is signed in to Decidio on this computer (`npx @decidio/sdk login`), hands Claude their Decidio context (what the connector's get_company_context answers: their units, their context packs and the always-on decisions), read with their own sign-in in the same 1.5 seconds; signed out or unanswered, nothing more (it never blocks). The person's own typed `decidio pause` / `decidio start` pauses or resumes the guard for that session (the prompt hook, behind the launcher's pre-filter: the SDK starts only for a prompt that mentions Decidio; not where the workspace keeps the guard on - Enterprise by default; every pause is recorded in the workspace's audit log, and the Agents page shows it while it holds). Needs this computer connected to Decidio - the first destructive command shows a link the workspace owner allows, once for every project on the computer (or `npx @decidio/sdk connect`, or an `init` .env). The pretool hook BLOCKS the call if it fails (onFailure) - a gate that cannot answer never answers yes.",
+  "hooks": {
+    "PreToolUse": [
+      {"matcher": "Bash|PowerShell", "hooks": [{"type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "pretool"], "timeout": 150, "onFailure": "block"}]}
+    ],
+    "PostToolUse": [
+      {"matcher": "Bash|PowerShell", "hooks": [{"type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Write", "hooks": [{"type": "command", "if": "Write(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "Edit", "hooks": [{"type": "command", "if": "Edit(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(**/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(~/.claude/settings*.json)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]},
+      {"matcher": "MultiEdit", "hooks": [{"type": "command", "if": "MultiEdit(~/.claude/plugins/**)", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "posttool"], "timeout": 30}]}
+    ],
+    "SessionStart": [
+      {"matcher": "startup|resume|clear|compact", "hooks": [{"type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "session"], "timeout": 15}]}
+    ],
+    "UserPromptSubmit": [
+      {"hooks": [{"type": "command", "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs", "prompt"], "timeout": 15}]}
+    ]
+  }
+}

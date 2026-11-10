@@ -1,0 +1,29 @@
+{
+  "name": "decidio",
+  "owner": { "name": "OmniTwin Technologies Inc.", "url": "https://decidioai.com" },
+  "metadata": {
+    "description": "Decidio for Claude: the organisation's own decisions, approvals and policies, checked whenever they could change the answer (decidio), and a person's approval before Claude Code runs a destructive command (decidio-approvals, which brings decidio with it)."
+  },
+  "plugins": [
+    {
+      "name": "decidio",
+      "source": "./plugins/decidio",
+      "description": "Claude checks your organisation's own decisions, approvals and policies in Decidio - who decided, what applies and whether it still holds - whenever they could change the answer, even when you don't name Decidio. The plugin brings the Decidio connector and the skill that tells Claude when to look.",
+      "version": "0.1.0",
+      "author": { "name": "OmniTwin Technologies Inc.", "url": "https://decidioai.com" },
+      "homepage": "https://decidioai.com",
+      "license": "MIT",
+      "keywords": ["decisions", "policies", "approvals", "governance", "audit"]
+    },
+    {
+      "name": "decidio-approvals",
+      "source": "./plugins/decidio-approvals",
+      "description": "A person approves Claude Code's destructive shell commands before they run - rm -rf, git push --force, DROP TABLE, terraform apply, kubectl delete, npm publish, curl | sh. Every session opens with one line saying it is on and who approves; everything else runs as before. Each approval is a sealed, verifiable Authority Receipt for that exact command. Installs the decidio plugin with it.",
+      "version": "0.13.0",
+      "author": { "name": "OmniTwin Technologies Inc.", "url": "https://decidioai.com" },
+      "homepage": "https://decidioai.com",
+      "license": "MIT",
+      "keywords": ["approvals", "guardrails", "destructive-commands", "audit", "human-in-the-loop"]
+    }
+  ]
+}

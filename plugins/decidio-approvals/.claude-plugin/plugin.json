@@ -1,0 +1,25 @@
+{
+  "name": "decidio-approvals",
+  "version": "0.13.0",
+  "description": "A person approves Claude Code's destructive shell commands before they run - rm -rf, git push --force, DROP TABLE, terraform apply, kubectl delete, npm publish, curl | sh. Each approval is a sealed, verifiable Authority Receipt for that exact command. Also sets up Decidio deploy approvals in a GitHub repository: a person approves each deploy before it runs. Installs the decidio plugin (the connector and its skill) with it.",
+  "author": {
+    "name": "OmniTwin Technologies Inc.",
+    "url": "https://decidioai.com"
+  },
+  "homepage": "https://decidioai.com",
+  "repository": "https://github.com/OmniTwin/decidio",
+  "license": "MIT",
+  "privacyPolicyUrl": "https://decidioai.com/privacy/product",
+  "keywords": [
+    "approvals",
+    "guardrails",
+    "destructive-commands",
+    "audit",
+    "human-in-the-loop",
+    "deploy-approvals",
+    "github-actions"
+  ],
+  "dependencies": [
+    "decidio"
+  ]
+}

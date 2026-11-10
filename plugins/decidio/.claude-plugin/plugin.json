@@ -1,0 +1,20 @@
+{
+  "name": "decidio",
+  "version": "0.1.0",
+  "description": "Claude checks your organisation's own decisions, approvals and policies in Decidio - who decided, what applies and whether it still holds - whenever they could change the answer, even when you don't name Decidio. Brings the Decidio connector and the skill that tells Claude when to look; no hooks, nothing runs on your computer.",
+  "author": {
+    "name": "OmniTwin Technologies Inc.",
+    "url": "https://decidioai.com"
+  },
+  "homepage": "https://decidioai.com",
+  "repository": "https://github.com/OmniTwin/decidio",
+  "license": "MIT",
+  "privacyPolicyUrl": "https://decidioai.com/privacy/product",
+  "keywords": [
+    "decisions",
+    "policies",
+    "approvals",
+    "governance",
+    "audit"
+  ]
+}

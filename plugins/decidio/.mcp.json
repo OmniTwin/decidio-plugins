@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "decidio": {
+      "type": "http",
+      "url": "https://mcp.decidioai.com/mcp",
+      "headers": { "X-Decidio-Client": "claude-plugin" }
+    }
+  }
+}
