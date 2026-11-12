@@ -19,7 +19,7 @@ Both use Decidio's public GitHub Action, pinned to its v1.3.1 commit: `OmniTwin/
 2. **Write the files.** Prefer the SDK, which writes both files and never overwrites an existing one:
 
    ```bash
-   npx -y @decidio/sdk@0.18.0 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
+   npx -y @decidio/sdk@0.19.0 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
    ```
 
    If `npx` is unavailable, write them yourself from the templates below.

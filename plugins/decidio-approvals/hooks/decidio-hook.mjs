@@ -16,7 +16,7 @@
 // The release pin moves with the SDK (packages/conformance/manifests.mjs holds every pin under the plugin to the SDK's version).
 import { spawn } from "node:child_process";
 
-const SDK = "@decidio/sdk@0.18.0";
+const SDK = "@decidio/sdk@0.19.0";
 const EVENTS = ["pretool", "posttool", "session", "prompt"];
 
 const event = process.argv[2];
