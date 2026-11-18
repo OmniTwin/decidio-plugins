@@ -20,7 +20,7 @@ A PreToolUse hook asks Decidio before destructive shell commands run - including
 The person types these as their own whole message, and Decidio's hook answers each one itself (it hands you the line to reply with):
 
 - `decidio status` - what's paused in this session, and for how long
-- `decidio pause` - pause the guard for this session (12 hours at most); `decidio pause git deletes` pauses only those kinds (`deletes`, `git`, `sql`, `infra`, `docker`, `publish`, `curl`, `system`, or a team's own rule by its name)
+- `decidio pause` - ask to pause the guard for this session (12 hours at most); it starts only once a person confirms it (below); `decidio pause git deletes` pauses only those kinds (`deletes`, `git`, `sql`, `infra`, `docker`, `publish`, `curl`, `system`, or a team's own rule by its name)
 - `decidio start` - end every pause
 - `decidio check` - watch the guard stop a delete and ask for approval
 - `decidio help` - every command, the kinds and the team's own rules
@@ -29,7 +29,7 @@ If the person asks what's paused, or what they can type, tell them to type `deci
 
 ## Pausing Decidio's guard for a session
 
-Only the person pauses it: they type `decidio pause` (and `decidio start` to resume) as their own message - the hook acts on it before you see it, and tells you the one line to reply with. Never try to pause or resume it yourself (running `hook prompt`, writing a file, calling Decidio): that is switching Decidio's check off - only the person may, and any pause is recorded in the workspace's audit log (the Agents page shows it while it holds). If the person asks you to pause it, tell them to type `decidio pause` themselves. While it is paused, destructive commands run with a line saying so - Claude Code's own permission check still applies - and Decidio still asks before a command edits Claude Code's settings to switch its check off. On an enterprise plan it can't be paused ("Your organisation keeps Decidio on for every session").
+Only the person pauses it: they type `decidio pause` (and `decidio start` to resume) as their own message - the hook acts on it before you see it, and tells you the one line to reply with. The pause is a request: nothing is paused until it is confirmed (by the person in Slack, Teams or the Decidio phone app if they approve their own computer's commands, otherwise by whoever approves them), and the guard stays on meanwhile (an earlier pause in this session keeps holding). Never try to pause or resume it yourself (running `hook prompt`, writing a file, calling Decidio): that is switching Decidio's check off - only the person may, and any pause is recorded in the workspace's audit log (the Agents page shows it while it holds). If the person asks you to pause it, tell them to type `decidio pause` themselves. While it is paused, destructive commands run with a line saying so - Claude Code's own permission check still applies - and Decidio still asks before a command edits Claude Code's settings to switch its check off. On an enterprise plan it can't be paused ("Your organisation keeps Decidio on for every session").
 
 ## When a command is denied with "Decidio BLOCKED ..."
 

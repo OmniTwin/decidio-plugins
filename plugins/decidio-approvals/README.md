@@ -20,9 +20,10 @@ decisions), which it depends on.
 ## What runs on your computer
 
 Every hook runs `node ${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs <event>`. That small script enters the project folder
-and runs the pinned release of Decidio's SDK, `npx -y @decidio/sdk@0.19.0 hook <event>`. It needs Node 18+ and npm, and
+and runs the pinned release of Decidio's SDK, `npx -y @decidio/sdk@0.20.0 hook <event>`. It needs Node 20.6+ and npm, and
 **Claude Code 2.1.295 or later**: an older Claude Code lets a command through when a hook can't answer, and can't run these
-hooks (`npx @decidio/sdk connect` checks your version and says so).
+hooks (`npx @decidio/sdk connect` checks your version and says so). After the first MCP call to a server that Decidio's hook didn't read, a
+one-time line in the session says so (once per server per session; see "MCP tool calls" in the SDK's README).
 
 - **Before and after each Bash or PowerShell call** (and a Write, Edit or MultiEdit on Claude Code's settings files or
   this plugin's files): asks Decidio whether the command needs a person's approval, then records that it ran. If the
@@ -32,13 +33,15 @@ hooks (`npx @decidio/sdk connect` checks your version and says so).
   your Decidio context (your units, your context packs and the always-on decisions, as the connector's
   `get_company_context` answers it):
 
-  > Decidio's hook asks a person before destructive shell commands in this project. When it refuses one, tell the user
+  > Decidio's hook asks a person before destructive commands and tool calls in this project. When it refuses one, tell the user
   > what its message says (who must approve, the link that connects this computer, or the request to hand Decidio's
   > guard_request tool) and follow it; never work around it. Mention Decidio only when it stops a command or the user
   > asks about it.
 
 - **When you send a prompt that mentions Decidio**: answers your own `decidio pause`, `decidio start`, `decidio status`,
-  `decidio check` and `decidio help`. Other prompts start nothing.
+  `decidio check` and `decidio help`. Other prompts start nothing. `decidio pause` sends a pause request: the guard stays on until it
+  is confirmed - by you in Slack, Teams or the Decidio phone app if you approve your own computer's commands, otherwise by whoever
+  approves them.
 
 ## Setup
 

@@ -19,7 +19,7 @@ Both use Decidio's public GitHub Action, pinned to its v1.3.1 commit: `OmniTwin/
 2. **Write the files.** Prefer the SDK, which writes both files and never overwrites an existing one:
 
    ```bash
-   npx -y @decidio/sdk@0.19.0 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
+   npx -y @decidio/sdk@0.20.0 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
    ```
 
    If `npx` is unavailable, write them yourself from the templates below.
@@ -33,7 +33,15 @@ Both use Decidio's public GitHub Action, pinned to its v1.3.1 commit: `OmniTwin/
 
 4. **Open a pull request** with the user's own git: a new branch, one commit (`Add Decidio deploy approvals`), then `gh pr create` if `gh` is available, otherwise push the branch and give the user the compare link. Do not push to the default branch unless the user asks. Merging it asks for nothing (it changes only the two workflow files); the next push of their code asks for the first approval.
 
-5. **Tell the user what is left in Decidio** (at https://app.decidioai.com/connect/github, the GitHub approvals setup): install the Decidio GitHub App on the repository's account, link their GitHub account, and choose this repository with this deploy workflow and environment. Then, in the repository's **Settings → Actions**, allow only the Decidio app to run the deploy workflow, so nobody can start a deploy by hand. Once merged, they click **Check the connection** on that page (or run `gh workflow run decidio-request.yml`): it confirms the setup and asks for nothing.
+5. **Tell the user what is left in Decidio** (at https://app.decidioai.com/connect/github, the GitHub approvals setup): install the Decidio GitHub App on the repository's account, link their GitHub account, and choose this repository with this deploy workflow and environment. Then lock it down (step 6), or follow the checklist on the repository's Environments tab in Decidio. Once merged, they click **Check the connection** on that page (or run `gh workflow run decidio-request.yml`): it confirms the setup and asks for nothing.
+
+6. **Lock it down - only with the user's explicit yes.** Three GitHub settings keep a deploy from going around Decidio: only the Decidio app and the repository's admins may start the deploy workflow; only the default branch (and admins' rollback branches) reach production's environment; changes to the default branch need a reviewed pull request. The SDK sets them through GitHub's own CLI (`gh`), so neither you nor Decidio ever handles the GitHub sign-in.
+   - Check `gh --version`, then whether gh is signed in by its exit status alone, with its output discarded: `gh auth status --hostname github.com >/dev/null 2>&1; echo $?` (0: signed in). If `gh` is missing, give the user https://cli.github.com and the checklist (https://app.decidioai.com/connect/github, the repository's Environments tab) and stop. If it isn't signed in, ask the user to run `gh auth login --web` in their own terminal - never run it for them, and never ask for or handle a token.
+   - It reports to Decidio as the user, so they must be the workspace owner, signed in once with `npx @decidio/sdk login` in their own terminal.
+   - Ask who should review workflow changes (GitHub users or teams, `@user` or `@org/team`, ideally a team or two people); never choose for them. If the only reviewer they name is themselves, offer `--without-review-rule` instead: GitHub never lets a person approve their own pull request, so the reviewed-changes rule would stop them merging alone. The flag leaves that rule and the CODEOWNERS lines out.
+   - Run `npx -y @decidio/sdk@0.20.0 github lockdown --dry-run --codeowners "<their answer>"` and show the user the whole plan, as printed. A dry run changes nothing in GitHub or the checkout and sends no report to Decidio.
+   - Ask: "Apply this plan? (yes/no)". Only after an explicit yes to THIS question, run the command it printed: `npx -y @decidio/sdk@0.20.0 github lockdown --yes --plan <id> --codeowners "<the same answer>"`. A yes to anything else is not a yes to this. If it says the plan changed, show the new dry run and ask again.
+   - If it wrote CODEOWNERS lines, add the file to a pull request as in step 4. Tell the user what the plan says to do by hand (moving secrets) and to run it again once the pull request merges.
 
 ## Templates
 
@@ -104,3 +112,5 @@ jobs:
 - Never put `${{ inputs.decidio }}` directly in a `run:` line; it goes only in the action's `decision:` input.
 - Never remove or reorder the verify step after the deploy, and never deploy anything other than `steps.decidio.outputs.sha`.
 - If the verify step fails, the deploy must not run - do not add `continue-on-error`.
+- Never run `gh auth token`, never read gh's config or keychain, and never set `GH_TOKEN` - the lock-down never needs a token in the chat.
+- Never run `github lockdown` without `--dry-run` or `--plan`.
