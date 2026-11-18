@@ -19,7 +19,7 @@ Both use Decidio's public GitHub Action, pinned to its v1.3.1 commit: `OmniTwin/
 2. **Write the files.** Prefer the SDK, which writes both files and never overwrites an existing one:
 
    ```bash
-   npx -y @decidio/sdk@0.20.0 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
+   npx -y @decidio/sdk@0.20.1 github init --api https://mcp.decidioai.com --environment production --workflow .github/workflows/deploy.yml
    ```
 
    If `npx` is unavailable, write them yourself from the templates below.
@@ -39,8 +39,8 @@ Both use Decidio's public GitHub Action, pinned to its v1.3.1 commit: `OmniTwin/
    - Check `gh --version`, then whether gh is signed in by its exit status alone, with its output discarded: `gh auth status --hostname github.com >/dev/null 2>&1; echo $?` (0: signed in). If `gh` is missing, give the user https://cli.github.com and the checklist (https://app.decidioai.com/connect/github, the repository's Environments tab) and stop. If it isn't signed in, ask the user to run `gh auth login --web` in their own terminal - never run it for them, and never ask for or handle a token.
    - It reports to Decidio as the user, so they must be the workspace owner, signed in once with `npx @decidio/sdk login` in their own terminal.
    - Ask who should review workflow changes (GitHub users or teams, `@user` or `@org/team`, ideally a team or two people); never choose for them. If the only reviewer they name is themselves, offer `--without-review-rule` instead: GitHub never lets a person approve their own pull request, so the reviewed-changes rule would stop them merging alone. The flag leaves that rule and the CODEOWNERS lines out.
-   - Run `npx -y @decidio/sdk@0.20.0 github lockdown --dry-run --codeowners "<their answer>"` and show the user the whole plan, as printed. A dry run changes nothing in GitHub or the checkout and sends no report to Decidio.
-   - Ask: "Apply this plan? (yes/no)". Only after an explicit yes to THIS question, run the command it printed: `npx -y @decidio/sdk@0.20.0 github lockdown --yes --plan <id> --codeowners "<the same answer>"`. A yes to anything else is not a yes to this. If it says the plan changed, show the new dry run and ask again.
+   - Run `npx -y @decidio/sdk@0.20.1 github lockdown --dry-run --codeowners "<their answer>"` and show the user the whole plan, as printed. A dry run changes nothing in GitHub or the checkout and sends no report to Decidio.
+   - Ask: "Apply this plan? (yes/no)". Only after an explicit yes to THIS question, run the command it printed: `npx -y @decidio/sdk@0.20.1 github lockdown --yes --plan <id> --codeowners "<the same answer>"`. A yes to anything else is not a yes to this. If it says the plan changed, show the new dry run and ask again.
    - If it wrote CODEOWNERS lines, add the file to a pull request as in step 4. Tell the user what the plan says to do by hand (moving secrets) and to run it again once the pull request merges.
 
 ## Templates

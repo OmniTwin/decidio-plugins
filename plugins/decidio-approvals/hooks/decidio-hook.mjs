@@ -27,7 +27,7 @@ import { spawn } from "node:child_process";
 import { homedir } from "node:os";
 import { createRequire } from "node:module";
 
-const SDK = "@decidio/sdk@0.20.0";
+const SDK = "@decidio/sdk@0.20.1";
 const EVENTS = ["pretool", "posttool", "session", "prompt"];
 
 const event = process.argv[2];
