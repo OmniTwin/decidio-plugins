@@ -20,7 +20,7 @@ decisions), which it depends on.
 ## What runs on your computer
 
 Every hook runs `node ${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs <event>`. That small script enters the project folder
-and runs the pinned release of Decidio's SDK, `npx -y @decidio/sdk@0.20.1 hook <event>`. It needs Node 20.6+ and npm, and
+and runs the pinned release of Decidio's SDK, `npx -y @decidio/sdk@0.21.0 hook <event>`. It needs Node 20.6+ and npm, and
 **Claude Code 2.1.295 or later**: an older Claude Code lets a command through when a hook can't answer, and can't run these
 hooks (`npx @decidio/sdk connect` checks your version and says so). After the first MCP call to a server that Decidio's hook didn't read, a
 one-time line in the session says so (once per server per session; see "MCP tool calls" in the SDK's README).

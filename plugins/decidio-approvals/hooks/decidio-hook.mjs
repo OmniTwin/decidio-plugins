@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Decidio approvals: the plugin's ONE hook launcher (cycle plugins, founder F-1109-13 (a')). Every hook in hooks.json runs
+// Decidio approvals: the plugin's ONE hook launcher. Every hook in hooks.json runs
 // `node ${CLAUDE_PLUGIN_ROOT}/hooks/decidio-hook.mjs <event>` in exec form, so no hook command holds a shell variable, a command
 // substitution or an inline program (the Claude plugin directory's pre-submission checklist), and Windows runs the same line as
 // macOS and Linux - no Git Bash, no PowerShell.
 //
 // What it does, and nothing more - exactly what the shell lines it replaces did:
 //   1. Enter the project folder Claude Code names (CLAUDE_PROJECT_DIR), as `cd "$CLAUDE_PROJECT_DIR"` did; if it can't, exit 1 (pretool:
-//      a deny), so a gate that cannot answer never answers yes. npx itself starts in the home folder (Lane L, l-lock) and is told the
+//      a deny), so a gate that cannot answer never answers yes. npx itself starts in the home folder and is told the
 //      project in DECIDIO_HOOK_CWD, so the project's node_modules and .npmrc never decide which code runs.
 //   2. Run the pinned SDK release's hook, `npx -y @decidio/sdk@<release> hook <event>`, with this process's stdin, stdout and
 //      stderr, and exit with its exit code. On Windows npx is a .cmd file, which Node starts only through a shell - and cmd.exe looks
@@ -14,11 +14,11 @@
 //      an npx.cmd that sits in the project.
 //   3. For `prompt`, the pre-filter the shell `case` was: the SDK starts only when the prompt's JSON mentions Decidio (any case), so
 //      every other prompt costs one read of stdin.
-//   4. For `pretool` (Lane L, GH-12): the launcher refuses by itself. It reads the SDK's answer and passes it on only when the SDK exited
+//   4. For `pretool`: the launcher refuses by itself. It reads the SDK's answer and passes it on only when the SDK exited
 //      0 and said nothing (a call it lets alone) or exactly one JSON object; if the SDK can't start, exits otherwise or on a signal, says
 //      something else, or runs past 140 s, the launcher prints a deny - so a Claude Code too old for `onFailure: "block"` (below 2.1.295)
 //      still gets a deny from a hook that failed. DECIDIO_HOOK_STARTED_AT tells the SDK when this began, so its hold ends in time.
-//   5. For `notice` (Lane L, l-mcp-notice; F-1117-LL1's condition): the one-time line to the person after an MCP call Decidio didn't
+//   5. For `notice`: the one-time line to the person after an MCP call Decidio didn't
 //      check, answered here in this process, before step 1 - never through npx, which every MCP call would wait 0.8-1.1 s for. Its line is
 //      the SDK's hookNoticeScript() verbatim, the line every settings file runs with `node -e` (cli-smoke holds the two equal). It never
 //      errors: any surprise is silence and exit 0.
@@ -27,7 +27,7 @@ import { spawn } from "node:child_process";
 import { homedir } from "node:os";
 import { createRequire } from "node:module";
 
-const SDK = "@decidio/sdk@0.20.1";
+const SDK = "@decidio/sdk@0.21.0";
 const EVENTS = ["pretool", "posttool", "session", "prompt"];
 
 const event = process.argv[2];
@@ -68,7 +68,7 @@ function runHook(input) {
     stdio: [input === undefined ? "inherit" : "pipe", PRETOOL ? "pipe" : "inherit", "inherit"],
     shell: win, // npx is npx.cmd on Windows; the arguments are fixed words, so the shell parses nothing of ours
     windowsHide: true,
-    // Lane L (l-lock, the privacy council's finding): npx starts in the person's home folder, never the project's, so a project's
+    // npx starts in the person's home folder, never the project's, so a project's
     // node_modules or .npmrc never decides what code runs here (npm reads ~/.npmrc anyway; the folders above home are the
     // administrator's - never the shared temp folder, which anyone on the computer can write); the hook is told the project
     // (DECIDIO_HOOK_CWD) and works in it as before
